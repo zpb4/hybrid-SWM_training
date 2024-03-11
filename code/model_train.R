@@ -100,7 +100,9 @@ print(max(abs(pred_mat_comp-pred_mat_scale))) #should return 0
 
 #Constrained optimization for MLE
 noise_pred_mat<-pred_mat_scale + pred_mat_scale * matrix(rnorm(length(idx_trn)*length(res_idx),sd=0.2),nrow=length(idx_trn))
-noise_err_db_val<-rnorm(length(err_db_val),sd=0.1)
+#noise_err_db_val<-rnorm(length(err_db_val),sd=0.1)
+noise_err_db_val<-rep(0,length(err_db_val))
+err_db_val<-err_db_val + err_db_val * rnorm(length(err_db_val),sd=0.1)
 
 noise_pred_mat_zero<-apply(noise_pred_mat,2,min)
 saveRDS(noise_pred_mat_zero,paste('./model_output/hymod_noise-pred-mat-zero_val_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
@@ -112,7 +114,7 @@ dyn_res_preds_zero<-noise_pred_mat_zero_min[idx_val,]
 
 noise_dyn_res_mle<-optimx(par=start,fn=GL_fun_mv_ar1_lin,sig_var=dyn_res_preds_zero,beta_var=dyn_res_preds,
                           xi_var=dyn_res_preds,phi_var=dyn_res_preds_zero,et=err_db_val,noise=noise_err_db_val,neg=F,
-                          lower = lb,upper = ub,method = 'L-BFGS-B',
+                          lower = lb,upper = ub,method = 'nlminb',
                           control = list(maximize=T,all.methods=F))
 
 
