@@ -1,2 +1,40 @@
 # hybrid-SWM_training
-Practical training exercise repository for hybrid-SWM implementation from Brodeur et al. (2024) 'A hybrid, non-stationary Stochastic Watershed Model (SWM) for uncertain hydrologic simulations under climate change'
+Practical training exercise repository for hybrid-SWM implementation from Brodeur et al. (2024) 'A hybrid, non-stationary Stochastic Watershed Model (SWM) for uncertain hydrologic simulations under climate change'. Supports Waterprogramming (Reed Group) blog post [here](https://waterprogramming.wordpress.com/2024/03/11/nonstationary-stochastic-watershed-modeling/). This README describes the basic components of the repository and how to implement the code. It also and serves as an example of a README file that includes the recommended components of a GRRIEN repository. The 'training_exercise.md' covers the algorithmic implementation of the model in detail for training and familiarization purposes.
+### Repository overview   
+This repository contains most of the standard elements of a GRRIEN repository, excluding the setup.sh functionality, 'data_source', and 'temp_data' elements that are used for more advanced repository structures setup to source large geospatial datasets:
+- README: this file
+- training_exercise.md: the file that describes in detail the algorithmic implementation of the hybrid SWM
+- raw_data: repository for the raw state-variable and simulation information for the SAC-SMA 'truth' model and the HYMOD 'process' model as described in the blog post. Data are included for the Feather River at Oroville (ORO) watershed.
+- analysis_data: repository to store pre-processed data outputs from the 'data_process.R' code
+- model_output: repository to store model objects and outputs from the 'model_train.R' and 'model_simulate.R' codefiles
+- figures_tables: repository to store figures generated from the 'visualize_results.R' code
+- code: repository for all codefiles
+    - functions: subrepository of 'code' that stores basic functions and routines for the primary codefiles
+### Code implementation instructions
+#### 1. Run ./code/data_process.R   
+   _Description: Preprocesses the raw data from .txt files in R data structure arrays_       
+   I: raw data .txt files   
+   O: preprocessed data arrays   
+#### 2. Run ./code/model_train.R
+   _Description: Fits both components of the hybrid SWM to the training data_      
+   I: pre-processed state-variable and hydrologic model simulation data from the 'data_process' step   
+   O: trained model objects saved as .rds files to the 'model_output' folder   
+#### 3. Run ./code/model_simulate.R   
+   _Description: Simulates from the fitted hybrid SWM for both the historical and 4C warmed cases across the entire range of the data (WY1989-2018). Must specify no. of samples to simulate (default is 10)._   
+   I: trained model objects and pre-processed data arrays   
+   O: SWM simulations saved as .rds arrays
+#### 4. Run ./code/visualize_results.R
+   _Description: Generates a set of figures described in more detail in the training_exercise.md file_   
+   I: trained model objects, pre-processed data arrays, SWM simulations   
+   O: figures/tables saved as .png files   
+
+### Dataset citation
+Brodeur, Z., Wi, S., Shabestanipour, G., Lamontagne, J. R., & Steinschneider, S. A hybrid, non-stationary Stochastic Watershed Model (SWM) for uncertain hydrologic simulations under climate change. Water Resources Research, in review.
+### Contact information
+Zach Brodeur (Cornell University), zpb4@cornell.edu
+### Preferred citation
+Brodeur, Z. P. (2024). hybrid-SWM_training: Mar 11, 2024 release (v1.0.0) [Software]. Github. https://github.com/zpb4/hybrid-SWM_training
+### Change request policy
+Please raise a GitHub issue on this site or contact the repository owner via email
+### License
+GNU general purpose license 3.0. See 'LICENSE.md' file for details
