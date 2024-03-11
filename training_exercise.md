@@ -17,4 +17,11 @@ The data processing for the hybrid SWM (data_process.R) is relatively straightfo
 ![image info](figures_tables/fig2.png "Model-as-truth experimental design")
 #### _Model-as-truth experimental design_   
 ### Model fitting
-Fitting of the hybrid-SWM is done via a staged, two-step process. The first step is an error correction model that is fit as a predictive model between the state-variables and the raw predictive errors, including lag-1 to 3 errors to account for autocorrelation. The second step is a dynamic residual model (DRM) that is a time-varying, state-variable dependent distributional model for the residuals of the error correction step. We'll go through the steps in more detail below with reference to the 'model_train
+Fitting of the hybrid-SWM is done via a staged, two-step process. The first step is an error correction model that is fit as a predictive model between the state-variables and the raw predictive errors, including lag-1 to 3 errors to account for autocorrelation. The second step is a dynamic residual model (DRM) that is a time-varying, state-variable dependent distributional model for the residuals of the error correction step. We'll go through the steps in more detail below with reference to the 'model_train.R' script. Here is the figure from the manuscript describing the model fitting procedure for reference:
+![image info](figures_tables/fig3.png "hybrid SWM")
+#### _Hybrid-SWM_  
+
+### Random Forest error correction model
+As mentioned in the model fitting section, the error correction model is simply a predictive model between the state-variables and the raw errors. We implement this step using a Random Forest (RF) model. RF models are
+![image info](figures_tables/RF.png "hybrid SWM")
+#### _Hybrid-SWM_  
