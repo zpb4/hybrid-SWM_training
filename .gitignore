@@ -1,0 +1,8 @@
+
+# R data structure files
+
+*.rds
+
+# png
+
+*.png
