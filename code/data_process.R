@@ -1,8 +1,8 @@
 #Script to process raw simulated and observed streamflow data and state-variable predictors for 3 sites
 
 #setup path to current directory
-current_dir<-dirname(rstudioapi::getSourceEditorContext()$path)
-setwd(current_dir)
+#current_dir<-dirname(rstudioapi::getSourceEditorContext()$path)
+#setwd(current_dir)
 
 #specify sites
 sma_site<-'ORO'
@@ -17,16 +17,16 @@ idx_val<-which(ix=='1998-10-01'):which(ix=='2004-09-30')
 idx_tst<-which(ix=='2004-10-01'):which(ix=='2018-09-30')
 
 #retrieve raw simulation data
-sma_hist<-read.table(paste('../data/sacsma_',sma_site,'.txt',sep=''))
-hym_hist<-read.table(paste('../data/hymod_',hym_site,'.txt',sep=''))
-sma_4c<-read.table(paste('../data/sacsma_',sma_site,'_4C.txt',sep=''))
-hym_4c<-read.table(paste('../data/hymod_',hym_site,'_4C.txt',sep=''))
+sma_hist<-read.table(paste('./raw_data/sacsma_',sma_site,'.txt',sep=''))
+hym_hist<-read.table(paste('./raw_data/hymod_',hym_site,'.txt',sep=''))
+sma_4c<-read.table(paste('./raw_data/sacsma_',sma_site,'_4C.txt',sep=''))
+hym_4c<-read.table(paste('./raw_data/hymod_',hym_site,'_4C.txt',sep=''))
 
 if(sma_site=='ORO'&hym_site=='ORO'){
-  sma_hist<-read.table(paste('../data/sacsma_',sma_site,'.txt',sep=''))
-  hym_hist<-read.table(paste('../data/hymod_',hym_site,'.txt',sep=''))
-  sma_4c<-read.table(paste('../data/sacsma_',sma_site,'_4C.txt',sep=''))
-  hym_4c<-read.table(paste('../data/hymod_',hym_site,'_4C.txt',sep=''))
+  sma_hist<-read.table(paste('./raw_data/sacsma_',sma_site,'.txt',sep=''))
+  hym_hist<-read.table(paste('./raw_data/hymod_',hym_site,'.txt',sep=''))
+  sma_4c<-read.table(paste('./raw_data/sacsma_',sma_site,'_4C.txt',sep=''))
+  hym_4c<-read.table(paste('./raw_data/hymod_',hym_site,'_4C.txt',sep=''))
 }
 
 #hymod output columns
@@ -44,8 +44,8 @@ colnames(hym_4c_vars)<-cnames_hym
 rownames(hym_hist_vars)<-as.character(ix)
 rownames(hym_4c_vars)<-as.character(ix)
 
-saveRDS(hym_hist_vars,paste('../data/hym_hist_vars_',hym_site,'.rds',sep=''))
-saveRDS(hym_4c_vars,paste('../data/hym_4c_vars_',hym_site,'.rds',sep=''))
+saveRDS(hym_hist_vars,paste('./analysis_data/hym_hist_vars_',hym_site,'.rds',sep=''))
+saveRDS(hym_4c_vars,paste('./analysis_data/hym_4c_vars_',hym_site,'.rds',sep=''))
 
 #store raw data - SACSMA
 sma_hist_vars<-sma_hist
@@ -64,8 +64,8 @@ obs_correct_4c<-sma_4c_vars[,'obs']
 obs_correct_4c[obs_correct_4c<0]<-0
 sma_4c_vars[,'obs']<-obs_correct_4c
 
-saveRDS(sma_hist_vars,paste('../data/sma_hist_vars_',sma_site,'.rds',sep=''))
-saveRDS(sma_4c_vars,paste('../data/sma_4c_vars_',sma_site,'.rds',sep=''))
+saveRDS(sma_hist_vars,paste('./analysis_data/sma_hist_vars_',sma_site,'.rds',sep=''))
+saveRDS(sma_4c_vars,paste('./analysis_data/sma_4c_vars_',sma_site,'.rds',sep=''))
 
 #-----------------------------------------------------------------------
 #2) Define arrays for predictions
@@ -96,7 +96,7 @@ hym_predmat_hist<-cbind(hym_predmat_hist,
                       ) 
 #relabel and save
 colnames(hym_predmat_hist)<-labs_hym
-saveRDS(hym_predmat_hist,paste('../data/hym_predmat_hist_',hym_site,'.rds',sep=''))
+saveRDS(hym_predmat_hist,paste('./analysis_data/hym_predmat_hist_',hym_site,'.rds',sep=''))
 
 #2b) HYMOD 4C
 #remove date columns
@@ -115,7 +115,7 @@ hym_predmat_4c<-cbind(hym_predmat_4c,
                       
 #relabel and save
 colnames(hym_predmat_4c)<-labs_hym
-saveRDS(hym_predmat_4c,paste('../data/hym_predmat_4c_',hym_site,'.rds',sep=''))
+saveRDS(hym_predmat_4c,paste('./analysis_data/hym_predmat_4c_',hym_site,'.rds',sep=''))
 
 #2c) SACSMA historical
 #remove date columns
@@ -137,7 +137,7 @@ sma_predmat_hist<-cbind(sma_predmat_hist,
 
 #relabel and save
 colnames(sma_predmat_hist)<-labs_sma
-saveRDS(sma_predmat_hist,paste('../data/sma_predmat_hist_',sma_site,'.rds',sep=''))
+saveRDS(sma_predmat_hist,paste('./analysis_data/sma_predmat_hist_',sma_site,'.rds',sep=''))
 
 #2b) SACSMA 4C
 #remove date columns
@@ -156,7 +156,7 @@ sma_predmat_4c<-cbind(sma_predmat_4c,
 
 #relabel and save
 colnames(sma_predmat_4c)<-labs_sma
-saveRDS(sma_predmat_4c,paste('../data/sma_predmat_4c_',hym_site,'.rds',sep=''))
+saveRDS(sma_predmat_4c,paste('./analysis_data/sma_predmat_4c_',sma_site,'.rds',sep=''))
 
 rm(list=ls());gc()
 

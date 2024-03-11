@@ -1,6 +1,6 @@
 #Main equations for Generalized Likelihood Function, Schoups & Vrugt (2010)
 
-source('GL_subeqs.R') #bring in subequations in terms of parameters below
+source('./code/functions/GL_subeqs.R') #bring in subequations in terms of parameters below
 library(fGarch)
 
 #1) GL function with linear models for each parameter
