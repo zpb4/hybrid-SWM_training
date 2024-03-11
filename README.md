@@ -1,3 +1,4 @@
+_Note: Repo is currently under construction; should be complete by 3/12/24_
 # hybrid-SWM_training
 Practical training exercise repository for hybrid-SWM implementation from Brodeur et al. (2024) 'A hybrid, non-stationary Stochastic Watershed Model (SWM) for uncertain hydrologic simulations under climate change'. Supports Waterprogramming (Reed Group) blog post [here](https://waterprogramming.wordpress.com/2024/03/11/nonstationary-stochastic-watershed-modeling/). This README describes the basic components of the repository and how to implement the code. It also and serves as an example of a README file that includes the recommended components of a GRRIEN repository. The 'training_exercise.md' covers the algorithmic implementation of the model in detail for training and familiarization purposes.
 ### Repository overview   
