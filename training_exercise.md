@@ -22,6 +22,6 @@ Fitting of the hybrid-SWM is done via a staged, two-step process. The first step
 #### _Hybrid-SWM_  
 
 ### Random Forest error correction model
-As mentioned in the model fitting section, the error correction model is simply a predictive model between the state-variables and the raw errors. We implement this step using a Random Forest (RF) model. RF models are
+As mentioned in the model fitting section, the error correction model is simply a predictive model between the state-variables and the raw errors. We implement this step using a Random Forest (RF) model, due to their robustness to overfitting. RF models are a relatively early ML technique that leverage an original methodology called Classification and Regression Trees (CART). Fitting of individual CART tree
 ![image info](figures_tables/RF.png "hybrid SWM")
-#### _Hybrid-SWM_  
+#### _Random Forest_  
