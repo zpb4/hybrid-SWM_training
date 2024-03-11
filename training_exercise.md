@@ -34,4 +34,7 @@ We can also employ LIME (Local, Interpretable, Model-agnostic Explanation) as a 
 ![image info](figures_tables/fig7.png "LIME")
 #### _LIME_  
 
-### Random Forest error correction model
+### Dynamic residual model (DRM)
+The DRM is a little bit methodologically dense. It embeds linear models for all the parameters of a distribution, the skew exponential power (SEP) distribution, inside a log-likelihood function that can be maximized against the empirical residuals in the validation subset after RF error correction. This allows the DRM to capture 'out-of-sample' residual uncertainty and time-varying, state-variable dependent properties of those residuals. We employ a noise regularization technique to the MLE procedure that helps smooth out the estimation of the coefficients against the data. It is probably most useful here to describe what the DRM actually does.  The first figure shows the outcome of the RF error correction procedure against out-of-sample errors for both Test and Test+4C.  
+![image info](figures_tables/fig7.png "LIME")
+#### _LIME_  
