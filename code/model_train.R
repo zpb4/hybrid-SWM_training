@@ -1,4 +1,5 @@
 #fit model between hymod and sacsma
+setwd('d:/hybrid-SWM_training/')
 library(fGarch)
 library(ranger)
 library(optimx)
@@ -6,31 +7,15 @@ library(mco)
 
 #specifications
 vers<-'err13' 
-# 'err13' - SV + lag1:3 errors
-# 'sim13' - SV + lag1:3 sim
-# 'err_sim13' - SV + lag1:3 errors and sim
-# 'err13_llag' - SV + lag1:3 errors and long lagged variables
-# 'all' - all SV (including lag 1:3 terms) and long lagged variables
-seed_length<-1
+seed<-10
 hym_site<-'ORO'
 sma_site<-'ORO'
-
-ll_vec<-c()
-noise_ll_vec<-c()
 
 #load predictor arrays
 hym_predmat_hist<-readRDS(paste('./analysis_data/hym_predmat_hist_',hym_site,'.rds',sep=''))
 sma_hist_vars<-readRDS(paste('./analysis_data/sma_hist_vars_',sma_site,'.rds',sep=''))
 
-lab_ll_avg<-paste(c('tavg','sim','runoff','baseflow','et','swe','upr_sm','lwr_sm'),'llag-avg')
-lab_ll_trend<-paste(c('tavg','sim','runoff','baseflow','et','swe','upr_sm','lwr_sm'),'llag-trend')
-
-if(vers=='all'){rf_idx<-which(colnames(hym_predmat_hist)!='err 0')}
-if(vers=='err13'){rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','err -1','err -2','err -3')))}
-if(vers=='sim13'){rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','sim -1','sim -2','sim -3')))}
-if(vers=='err_sim13'){{rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','sim -1','sim -2','sim -3','err -1','err -2','err -3')))}}
-if(vers=='err13_llag'){rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','err -1','err -2','err -3',
-                                                                     lab_ll_avg,lab_ll_trend)))}
+rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','err -1','err -2','err -3')))
 
 #do not include lag error terms in dynamic residual prediction
 res_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0')))
@@ -48,8 +33,6 @@ rf_err<-hym_predmat_hist[,'err 0']
 
 rf_pred<-hym_predmat_hist[,rf_idx]
 
-for(s in 1:seed_length){
-seed<-s
 set.seed(seed)
 #2) Fit Random Forest error correction model
 
@@ -110,7 +93,7 @@ saveRDS(norm_vec,paste('./model_output/hymod_norm-vec_hist_',hym_site,'.rds',sep
 pred_mat_comp<-(pred_mat[idx_trn,]-matrix(rep(ctr_vec,length(idx_trn)),ncol=dim(pred_mat)[2],byrow=T))/matrix(rep(scale_vec,length(idx_trn)),ncol=dim(pred_mat)[2],byrow=T)
 print(max(abs(pred_mat_comp-pred_mat_scale))) #should return 0
 
-#as above but with noise regularization
+#MLE with noise regularization
 
 #inputs/predictand -> z* = z + z*norm(0,sd) [Klotz et al. 2022, p16]
 #recommended setting [Rothsfuss et al. 2019, p15] sd_x=0.2, sd_y=0.1 
@@ -129,7 +112,7 @@ dyn_res_preds_zero<-noise_pred_mat_zero_min[idx_val,]
 
 noise_dyn_res_mle<-optimx(par=start,fn=GL_fun_mv_ar1_lin,sig_var=dyn_res_preds_zero,beta_var=dyn_res_preds,
                           xi_var=dyn_res_preds,phi_var=dyn_res_preds_zero,et=err_db_val,noise=noise_err_db_val,neg=F,
-                          lower = lb,upper = ub,method = 'Rvmmin',
+                          lower = lb,upper = ub,method = 'L-BFGS-B',
                           control = list(maximize=T,all.methods=F))
 
 
@@ -149,15 +132,10 @@ noise_param_out<-GL_fun_mv_ar1_lin_params(noise_dyn_res_coef,sig_var=dyn_res_pre
 
 print(noise_ll)
 print(noise_coef_mat)
-noise_ll_vec[s]<-noise_ll
 
 saveRDS(noise_dyn_res_coef,paste('./model_output/hymod_noise-dyn-res-coef_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
 saveRDS(noise_coef_mat,paste('./model_output/hymod_noise-dyn-res-coef-mat_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
 saveRDS(noise_param_out,paste('./model_output/hymod_noise-dyn-res-params_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
-}
-
-saveRDS(ll_vec,paste('./model_output/hymod_llvec_v-',vers,'.rds',sep=''))
-saveRDS(noise_ll_vec,paste('./model_output/hymod_noise-llvec_v-',vers,'.rds',sep=''))
 
 rm(list=ls());gc()
 
