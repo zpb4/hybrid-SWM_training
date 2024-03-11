@@ -22,6 +22,16 @@ Fitting of the hybrid-SWM is done via a staged, two-step process. The first step
 #### _Hybrid-SWM_  
 
 ### Random Forest error correction model
-As mentioned in the model fitting section, the error correction model is simply a predictive model between the state-variables and the raw errors. We implement this step using a Random Forest (RF) model, due to their robustness to overfitting. RF models are a relatively early ML technique that leverage an original methodology called Classification and Regression Trees (CART). Fitting of individual CART tree
+As mentioned in the model fitting section, the error correction model is simply a predictive model between the state-variables and the raw errors. We implement this step using a Random Forest (RF) model, due to their robustness to overfitting. RF models are a relatively early ML technique that leverage an original methodology called Classification and Regression Trees (CART). Fitting of individual CART trees IS prone to overfitting, but RF builds and ensemble of trees using a few randomization techniques (bagging, random feature selection). The output of the RF is the 'majority vote' of the ensemble of trees and coupled with the other randomization techniques, prevents overfitting to the training data.
 ![image info](figures_tables/RF.png "hybrid SWM")
 #### _Random Forest_  
+
+The code implementation of the RF model is straightforward, as is prediction from the fitted model. Importantly, the RF error correction model is fitted to a calibration subset of the training data, leaving the validation subset for fitting of the DRM. To interpret variable importance, we can use the output of the fitted RF model directly, which calculated feature importance aggregated over all the trees in the ensemble. 
+![image info](figures_tables/fig6.png "RF variable importance")
+#### _RF variable importance_  
+
+We can also employ LIME (Local, Interpretable, Model-agnostic Explanation) as a form of explainable AI (xAI) to the fitted RF model to understand local feature importance, down to the granularity of individual timesteps. [Here](docs/LIME.pdf) is a short pictorial depiction of LIME. Below is the result of the LIME procedure applied to subsets of the data to accentuate features that contribute most to inferring changing biases between the Test and Test+4C scenarios.
+![image info](figures_tables/fig7.png "LIME")
+#### _LIME_  
+
+### Random Forest error correction model
