@@ -11,6 +11,7 @@ This repository contains most of the standard elements of a GRRIEN repository, e
 - figures_tables: repository to store figures generated from the 'visualize_results.R' code
 - code: repository for all codefiles
     - functions: subrepository of 'code' that stores basic functions and routines for the primary codefiles
+- docs: documentation associated with this repo, primarily the manuscript and supporting info
 ### Code implementation instructions
 #### 1. Run ./code/data_process.R   
    _Description: Preprocesses the raw data from .txt files in R data structure arrays_       
