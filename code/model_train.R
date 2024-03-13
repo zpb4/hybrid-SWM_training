@@ -116,7 +116,9 @@ noise_dyn_res_mle<-optimx(par=start,fn=GL_fun_mv_ar1_lin,sig_var=dyn_res_preds_z
                           xi_var=dyn_res_preds,phi_var=dyn_res_preds_zero,et=err_db_val,noise=noise_err_db_val,neg=F,
                           lower = lb,upper = ub,method = 'nlminb',
                           control = list(maximize=T,all.methods=F))
-
+#NOTE: If issues with getting an MLE solution, try different seeds or different optimization method below:
+#method options: ('lbfgsb','nlminb','spg','Rcgmin','Rvmmin','bobyqa','nmkb','hjkb')
+#can also run 'all.methods=T' in control list to try out all 8 options in a single run (takes a while)
 
 #retrieve parameters
 noise_dyn_res_coef<-c()
