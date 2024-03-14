@@ -1,30 +1,18 @@
 
 #fit model between hymod and sacsma
-setwd('z:/oro_nonstat/')
-source('GL_maineqs_rev1.R')
+#setwd('z:/oro_nonstat/')
+source('./code/functions/GL_maineqs.R')
 
 hym_site<-'ORO'
 sma_site<-'ORO'
 #specifications
 vers<-'err13' 
-# 'err13' - SV + lag1:3 errors
-# 'sim13' - SV + lag1:3 sim
-# 'err_sim13' - SV + lag1:3 errors and sim
-# 'err13_llag' - SV + lag1:3 errors and long lagged variables
-# 'all' - all SV (including lag 1:3 terms) and long lagged variables
 sig_ylms<-c(0,0.8)
-bet_ylms<-c(0,2.75)
-xi_ylms<-c(-.3,.3)
+bet_ylms<-c(0,2.0)
+xi_ylms<-c(-.1,.1)
 phi_ylms<-c(0,1)
 
 noise_reg=T
-
-if(noise_reg==F){
-  ll_vec<-readRDS(paste('fit_rev1/hymod_llvec_v-',vers,'.rds',sep=''))
-  seed<-which.max(ll_vec)}
-if(noise_reg==T){
-  noise_ll_vec<-readRDS(paste('fit_rev1/hymod_noise-llvec_v-',vers,'.rds',sep=''))
-  seed<-which.max(noise_ll_vec)}
 
 #wy subset to compare
 #'5wet': c(2005,2006,2011,2016,2017)
@@ -32,13 +20,14 @@ if(noise_reg==T){
 #'tst-all' : 2005:2018
 wy_comp<-2005:2018
 wy_tag<-'tst-all'
+seed=10
 
 ix<-seq(as.Date('1988-10-01'),as.Date('2018-09-30'),'day')
 
-hym_predmat_hist<-readRDS(paste('data_rev1/hym_predmat_hist_',hym_site,'.rds',sep=''))
-hym_predmat_4c<-readRDS(paste('data_rev1/hym_predmat_4c_',hym_site,'.rds',sep=''))
-rf_err_corr<-readRDS(paste('fit_rev1/hymod_rf-err-corr_cal_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
-norm_vec<-readRDS(paste('fit_rev1/hymod_norm-vec_hist_',hym_site,'.rds',sep=''))
+hym_predmat_hist<-readRDS(paste('./analysis_data/hym_predmat_hist_',hym_site,'.rds',sep=''))
+hym_predmat_4c<-readRDS(paste('./analysis_data/hym_predmat_4c_',hym_site,'.rds',sep=''))
+rf_err_corr<-readRDS(paste('./model_output/hymod_rf-err-corr_cal_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
+norm_vec<-readRDS(paste('./model_output/hymod_norm-vec_hist_',hym_site,'.rds',sep=''))
 
 ix_comp<-c()
 idx_comp<-c()
@@ -49,24 +38,10 @@ for(i in 1:length(wy_comp)){
 ix_comp<-as.Date(ix_comp,origin = '1970-01-01')
 ixx_comp<-as.POSIXlt(ix_comp)
 
-if(noise_reg==T){
-  dyn_res_coef<-readRDS(paste('fit_rev1/hymod_noise-dyn-res-coef_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
-  pred_mat_zero<-readRDS(paste('fit_rev1/hymod_noise-pred-mat-zero_val_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
-}
-if(noise_reg==F){
-  dyn_res_coef<-readRDS(paste('fit_rev1/hymod_dyn-res-coef_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
-  pred_mat_zero<-readRDS(paste('fit_rev1/hymod_pred-mat-zero_val_',hym_site,'.rds',sep=''))
-}
+dyn_res_coef<-readRDS(paste('./model_output/hymod_noise-dyn-res-coef_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
+pred_mat_zero<-readRDS(paste('./model_output/hymod_noise-pred-mat-zero_val_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
 
-lab_ll_avg<-paste(c('tavg','sim','runoff','baseflow','et','swe','upr_sm','lwr_sm'),'llag-avg')
-lab_ll_trend<-paste(c('tavg','sim','runoff','baseflow','et','swe','upr_sm','lwr_sm'),'llag-trend')
-
-if(vers=='all'){rf_idx<-which(colnames(hym_predmat_hist)!='err 0')}
-if(vers=='err13'){rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','err -1','err -2','err -3')))}
-if(vers=='sim13'){rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','sim -1','sim -2','sim -3')))}
-if(vers=='err_sim13'){{rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','sim -1','sim -2','sim -3','err -1','err -2','err -3')))}}
-if(vers=='err13_llag'){rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','err -1','err -2','err -3',
-                                                                          lab_ll_avg,lab_ll_trend)))}
+rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','err -1','err -2','err -3')))
 
 #do not include lag error terms in dynamic residual prediction
 res_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0')))
@@ -85,7 +60,6 @@ pred_mat_scale<-(dyn_res_preds-matrix(rep(norm_vec[1,],length(idx_comp)),ncol=(d
 pred_mat_zero_min<-pred_mat_scale-matrix(rep(pred_mat_zero,length(idx_comp)),ncol=dim(pred_mat_scale)[2],byrow=T)
 
 param_out_tst<-GL_fun_mv_ar1_lin_params(dyn_res_coef,sig_var=pred_mat_zero_min,beta_var=pred_mat_scale,xi_var=pred_mat_scale,phi_var=pred_mat_zero_min,et=err_db)
-
 
 #test4c
 pred_mat_4c<-hym_predmat_4c[idx_comp,rf_idx]
@@ -164,7 +138,7 @@ phi_min_4c<-lapply(phi_lst_4c,lwr)
 
 mos<-c('J','F','M','A','M','J','J','A','S','O','N','D')
 
-png(paste('h:/oroville_non-stationary/paper/figs_rev1/fig9/fig9_',wy_tag,'_v-',vers,'_nreg=',noise_reg,'.png',sep=''),width=768,height=768)
+png(paste('./figures_tables/fig9.png',sep=''),width=768,height=768)
 par(mfrow=c(2,2),mar=c(2,4.5,0.5,0.5),mgp=c(2,0.5,0),tcl=-0.2,cex.lab=3,cex.axis=1.75,cex.main=3,font.main=4)
 
 plot(1:12,sig_mn_tst,type='l',xlab='',ylab=bquote(~sigma[t]),col='skyblue4',lwd=3,xaxt='n',ylim=sig_ylms)

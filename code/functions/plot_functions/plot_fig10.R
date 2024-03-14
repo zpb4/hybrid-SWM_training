@@ -1,20 +1,16 @@
-setwd('z:/oro_nonstat/')
-source('mm-cfs_conversion.R')
+#setwd('z:/oro_nonstat/')
+source('./code/functions/mm-cfs_conversion.R')
 library(scales)
 
 hym_site<-'ORO'
 gen_period1<-'hist-all'
 gen_period2<-'4c-all'
 samp_type<-'split'
-n<-1000
+n<-100
 #specifications
 vers<-'err13' 
-# 'err13' - SV + lag1:3 errors
-# 'sim13' - SV + lag1:3 sim
-# 'err_sim13' - SV + lag1:3 errors and sim
-# 'err13_llag' - SV + lag1:3 errors and long lagged variables
-# 'all' - all SV (including lag 1:3 terms) and long lagged variables
 noise_reg=T
+seed=10
 
 
 #wy subset to compare
@@ -26,14 +22,14 @@ wy_tag<-'5wet'
 
 hym_kcfs_conv<-as.numeric(area_calc[hym_site,2])*mm_to_cfs/1000
 
-hym_predmat_hist<-readRDS(paste('data_rev1/hym_predmat_hist_',hym_site,'.rds',sep=''))
-hym_predmat_4c<-readRDS(paste('data_rev1/hym_predmat_4c_',hym_site,'.rds',sep=''))
+hym_predmat_hist<-readRDS(paste('./analysis_data/hym_predmat_hist_',hym_site,'.rds',sep=''))
+hym_predmat_4c<-readRDS(paste('./analysis_data/hym_predmat_4c_',hym_site,'.rds',sep=''))
 
-syn_tst_err_static<-readRDS('out_rev1/hymod_benchmark_syn-err_hist.rds')
-syn_4c_err_static<-readRDS('out_rev1/hymod_benchmark_syn-err_4c.rds')
+syn_tst_err_static<-readRDS('./model_output/hymod_benchmark_syn-err_hist.rds')
+syn_4c_err_static<-readRDS('./model_output/hymod_benchmark_syn-err_4c.rds')
 
-syn_tst_err_hyb<-readRDS(paste('out_rev1/hymod_syn-err_',hym_site,'_',gen_period1,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))
-syn_4c_err_hyb<-readRDS(paste('out_rev1/hymod_syn-err_',hym_site,'_',gen_period2,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))
+syn_tst_err_hyb<-readRDS(paste('./model_output/hymod_syn-err_',hym_site,'_',gen_period1,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))
+syn_4c_err_hyb<-readRDS(paste('./model_output/hymod_syn-err_',hym_site,'_',gen_period2,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))
 
 ix<-seq(as.Date('1988-10-01'),as.Date('2018-09-30'),'day')
 
@@ -56,7 +52,7 @@ syn_tst_err_hybrid<-syn_tst_err_hyb[idx_comp,]*hym_kcfs_conv
 syn_4c_err_hybrid<-syn_4c_err_hyb[idx_comp,]*hym_kcfs_conv
 #--------------------------------------------------------------
 #plot raw errors vs corrected errors
-png(paste('h:/Projects/Nonstationary SWM/oroville_non-stationary/paper/figs_rev1/fig10/fig10_',wy_tag,'_v-',vers,'_nreg=',noise_reg,'.png',sep=''),width=768,height=640)
+png(paste('./figures_tables/fig10.png',sep=''),width=768,height=640)
 par(mfrow=c(2,2),oma=c(1,2,2,0),mar=c(0.5,1.5,0.5,0.5),mgp=c(2,0.5,0),tcl=-0.2,cex.lab=2,cex.axis=1.75)
 my.gray = alpha('gray50',alpha=0.5)
 

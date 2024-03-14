@@ -1,8 +1,7 @@
-setwd('z:/oro_nonstat/')
-library(raster)
-library(RColorBrewer)
+#setwd('z:/oro_nonstat/')
 library(TeachingDemos)
-source('mm-cfs_conversion.R')
+
+source('./code/functions/mm-cfs_conversion.R')
 
 hym_site<-'ORO'
 sma_site<-'ORO'
@@ -11,7 +10,7 @@ gen_period1<-'hist-all'
 gen_period2<-'4c-all'
 samp_type<-'split'
 noise_reg=T
-n<-1000
+n<-100
 
 ix<-seq(as.Date('1988-10-01'),as.Date('2018-09-30'),'day')
 ix2<-as.POSIXlt(ix)
@@ -22,18 +21,18 @@ ixx_tst<-as.POSIXlt(ix_tst)
 
 hym_kcfs_conv<-as.numeric(area_calc[hym_site,2])*mm_to_cfs/1000
 
-hym_predmat_hist<-readRDS(paste('data_rev1/hym_predmat_hist_',hym_site,'.rds',sep=''))
-hym_predmat_4c<-readRDS(paste('data_rev1/hym_predmat_4c_',hym_site,'.rds',sep=''))
+hym_predmat_hist<-readRDS(paste('./analysis_data/hym_predmat_hist_',hym_site,'.rds',sep=''))
+hym_predmat_4c<-readRDS(paste('./analysis_data/hym_predmat_4c_',hym_site,'.rds',sep=''))
 sim_hymod_tst<-hym_predmat_hist[idx_tst,'sim 0']*hym_kcfs_conv
 sim_hymod_4c<-hym_predmat_4c[idx_tst,'sim 0']*hym_kcfs_conv
 
-sma_predmat_hist<-readRDS(paste('data_rev1/sma_predmat_hist_',sma_site,'.rds',sep=''))
-sma_predmat_4c<-readRDS(paste('data_rev1/sma_predmat_4c_',sma_site,'.rds',sep=''))
+sma_predmat_hist<-readRDS(paste('./analysis_data/sma_predmat_hist_',sma_site,'.rds',sep=''))
+sma_predmat_4c<-readRDS(paste('./analysis_data/sma_predmat_4c_',sma_site,'.rds',sep=''))
 sim_sma_tst<-sma_predmat_hist[idx_tst,'sim 0']*hym_kcfs_conv
 sim_sma_4c<-sma_predmat_4c[idx_tst,'sim 0']*hym_kcfs_conv
 
-swm_out_hist<-readRDS(paste('out_rev1/hymod_syn-flow_',hym_site,'_',gen_period1,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))*hym_kcfs_conv
-swm_out_4c<-readRDS(paste('out_rev1/hymod_syn-flow_',hym_site,'_',gen_period2,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))*hym_kcfs_conv
+swm_out_hist<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period1,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))*hym_kcfs_conv
+swm_out_4c<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period2,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))*hym_kcfs_conv
 
 swm_out_tst<-swm_out_hist[idx_tst,]
 swm_out_4c<-swm_out_4c[idx_tst,]
@@ -66,7 +65,7 @@ ymax<-max(sim_sma_tst[wy],swm_med_tst[wy],sim_sma_4c[wy],swm_med_4c[wy])
 wy_lab<-c('Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep')
 mth_lab<-c('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')
 
-png(paste('h:/Projects/Nonstationary SWM/oroville_non-stationary/paper/figs_rev1/fig11/swm-ts_95_fig11_feb-jul_',yr,'_v-',vers,'_nreg=',noise_reg,'.png',sep=''),height=900,width=800)
+png(paste('./figures_tables/fig11.png',sep=''),height=900,width=800)
 
 #layout_mat<-matrix(c(1,1,1,2,1,1,1,2,3,3,3,4,3,3,3,4),ncol=4,byrow=T)
 #layout(layout_mat)

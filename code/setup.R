@@ -1,7 +1,11 @@
 #load required R packages
+install.packages('TeachingDemos',repos= 'https://cloud.r-project.org/')
+install.packages('scales',repos= 'https://cloud.r-project.org/')
 install.packages('stringr',repos= 'https://cloud.r-project.org/')
 install.packages('nloptr',repos= 'https://cloud.r-project.org/')
 install.packages('optimx',repos= 'https://cloud.r-project.org/')
 install.packages('ranger',repos= 'https://cloud.r-project.org/')
 install.packages('fGarch',repos= 'https://cloud.r-project.org/')
 install.packages('lime',repos= 'https://cloud.r-project.org/')
+install.packages('gt',repos= 'https://cloud.r-project.org/')
+install.packages('webshot2',repos= 'https://cloud.r-project.org/')
