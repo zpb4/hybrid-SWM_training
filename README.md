@@ -1,10 +1,10 @@
-_Note: Repo is currently under construction; should be complete by 3/12/24_
 # hybrid-SWM_training
 Practical training exercise repository for hybrid-SWM implementation from Brodeur et al. (2024) 'A hybrid, non-stationary Stochastic Watershed Model (SWM) for uncertain hydrologic simulations under climate change'. Supports Waterprogramming (Reed Group) blog post [here](https://waterprogramming.wordpress.com/2024/03/11/nonstationary-stochastic-watershed-modeling/). This README describes the basic components of the repository and how to implement the code. It also and serves as an example of a README file that includes the recommended components of a GRRIEN repository. The 'training_exercise.md' covers the algorithmic implementation of the model in detail for training and familiarization purposes.
 ### Repository overview   
 This repository contains most of the standard elements of a GRRIEN repository, excluding the setup.sh functionality, 'data_source', and 'temp_data' elements that are used for more advanced repository structures setup to source large geospatial datasets:
 - README: this file
 - training_exercise.md: the file that describes in detail the algorithmic implementation of the hybrid SWM
+- run_code.cmd: file to run code elements individually on an HPC with SLURM using the 'sbatch' command, i.e. 'sbatch run_code.cmd'
 - raw_data: repository for the raw state-variable and simulation information for the SAC-SMA 'truth' model and the HYMOD 'process' model as described in the blog post. Data are included for the Feather River at Oroville (ORO) watershed.
 - analysis_data: repository to store pre-processed data outputs from the 'data_process.R' code
 - model_output: repository to store model objects and outputs from the 'model_train.R' and 'model_simulate.R' codefiles
@@ -13,19 +13,25 @@ This repository contains most of the standard elements of a GRRIEN repository, e
     - functions: subrepository of 'code' that stores basic functions and routines for the primary codefiles
 - docs: documentation associated with this repo, primarily the manuscript and supporting info
 ### Code implementation instructions
-#### 1. Run ./code/data_process.R   
+#### 1. Run ./code/setup.R   
+   _Description: Installs required R packages_
+#### 2. Run ./code/data_process.R   
    _Description: Preprocesses the raw data from .txt files in R data structure arrays_       
    I: raw data .txt files   
    O: preprocessed data arrays   
-#### 2. Run ./code/model_train.R
+#### 3. Run ./code/model_train.R
    _Description: Fits both components of the hybrid SWM to the training data_      
    I: pre-processed state-variable and hydrologic model simulation data from the 'data_process' step   
    O: trained model objects saved as .rds files to the 'model_output' folder   
-#### 3. Run ./code/model_simulate.R   
-   _Description: Simulates from the fitted hybrid SWM for both the historical and 4C warmed cases across the entire range of the data (WY1989-2018). Must specify no. of samples to simulate (default is 10)._   
+#### 4. Run ./code/model_simulate.R   
+   _Description: Simulates from the fitted hybrid SWM and a 'static' benchmark SWM model for both the historical and 4C warmed cases across the entire range of the data (WY1989-2018). Must specify no. of samples to simulate (default is 100)._   
    I: trained model objects and pre-processed data arrays   
    O: SWM simulations saved as .rds arrays
-#### 4. Run ./code/visualize_results.R
+#### 5. Run ./code/model_lime.R   
+   _Description: Runs the Local Interpretable Model Agnostic (LIME) routine against the trained Random Forest error correction model_   
+   I: trained RF model object and pre-processed data arrays   
+   O: LIME explanation object
+#### 6. Run ./code/visualize_results.R
    _Description: Generates a set of figures described in more detail in the training_exercise.md file_   
    I: trained model objects, pre-processed data arrays, SWM simulations   
    O: figures/tables saved as .png files   
