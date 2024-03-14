@@ -46,3 +46,15 @@ The application of the DRM is shown for the same periods, demonstrating its abil
 Finally, interpretability of the model can be relatively easily accomplished looking at properties of the parameters, such as their seasonality.
 ![image info](figures_tables/fig9.png "DRM seasonality")
 #### _DRM parameter seasonality_  
+
+Comparison of the hybrid SWM to a 'static' approach noting the inability of the static model to emulate changes in the Test+4C period.
+![image info](figures_tables/fig10.png "hybrid SWM vs static SWM")
+#### _Hybrid SWM vs static SWM_  
+
+Timeseries plot in 2011 showing implications of shifts in biases between Test and Test+4C case. Of note during snowmelt periods and flow recession.
+![image info](figures_tables/fig11.png "hybrid SWM timeseries plot")
+#### _Hybrid SWM timeseries plot_  
+
+Comparison of hybrid SWM and static SWM in terms of emulating extreme high and low flows in Test and Test+4C.
+![image info](figures_tables/fig12.png "hybrid SWM vs static SWM - high/low flow extremes")
+#### _Hybrid SWM vs static SWM - high/low flow extremes_ 
