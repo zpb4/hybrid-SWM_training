@@ -8,6 +8,7 @@ This repository contains most of the standard elements of a GRRIEN repository, e
 - raw_data: repository for the raw state-variable and simulation information for the SAC-SMA 'truth' model and the HYMOD 'process' model as described in the blog post. Data are included for the Feather River at Oroville (ORO) watershed.
 - analysis_data: repository to store pre-processed data outputs from the 'data_process.R' code
 - model_output: repository to store model objects and outputs from the 'model_train.R' and 'model_simulate.R' codefiles
+    - NOTE: 100x sample runs and LIME results are archived here from previous generation runs; simulate code is lengthy to run and you can use these pre-staged runs for the visualizations
 - figures_tables: repository to store figures generated from the 'visualize_results.R' code
 - code: repository for all codefiles
     - functions: subrepository of 'code' that stores basic functions and routines for the primary codefiles
@@ -18,23 +19,31 @@ This repository contains most of the standard elements of a GRRIEN repository, e
 #### 2. Run ./code/data_process.R   
    _Description: Preprocesses the raw data from .txt files in R data structure arrays_       
    I: raw data .txt files   
-   O: preprocessed data arrays   
+   O: preprocessed data arrays     
+      
+   _RUNTIME: <1 min_ 
 #### 3. Run ./code/model_train.R
    _Description: Fits both components of the hybrid SWM to the training data_      
    I: pre-processed state-variable and hydrologic model simulation data from the 'data_process' step   
    O: trained model objects saved as .rds files to the 'model_output' folder   
+      
+   _RUNTIME: <5 min_
 #### 4. Run ./code/model_simulate.R   
    _Description: Simulates from the fitted hybrid SWM and a 'static' benchmark SWM model for both the historical and 4C warmed cases across the entire range of the data (WY1989-2018). Must specify no. of samples to simulate (default is 100)._   
    I: trained model objects and pre-processed data arrays   
-   O: SWM simulations saved as .rds arrays
+   O: SWM simulations saved as .rds arrays   
+      
+   _RUNTIME: >1 hour on HPC for 100x samples; if just wanting to familiarize with model and code, you can use the pre-staged simulation data in the 'model_outputs' folder._   
 #### 5. Run ./code/model_lime.R   
    _Description: Runs the Local Interpretable Model Agnostic (LIME) routine against the trained Random Forest error correction model_   
    I: trained RF model object and pre-processed data arrays   
-   O: LIME explanation object
+   O: LIME explanation object      
+      
+   _RUNTIME: <30 min; if just wanting to familiarize with model and code, you can use the pre-staged LIME data in the 'model_outputs' folder._   
 #### 6. Run ./code/visualize_results.R
    _Description: Generates a set of figures described in more detail in the training_exercise.md file_   
    I: trained model objects, pre-processed data arrays, SWM simulations   
-   O: figures/tables saved as .png files   
+   O: figures/tables saved as .png files      
 
 ### Dataset citation
 Brodeur, Z., Wi, S., Shabestanipour, G., Lamontagne, J. R., & Steinschneider, S. A hybrid, non-stationary Stochastic Watershed Model (SWM) for uncertain hydrologic simulations under climate change. Water Resources Research, in review.
