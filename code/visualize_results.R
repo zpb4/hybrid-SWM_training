@@ -62,6 +62,7 @@ source('./code/functions/plot_functions/plot_fig12.R')
 rm(list=ls());gc()
 
 #Plot Table 2 - DRM coefficient table
+#NOTE: Could not verify this was working on my machine due to some issues with the R packages due to updates
 source('./code/functions/plot_functions/plot_table2.R')
 
 rm(list=ls());gc()

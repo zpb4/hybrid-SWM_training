@@ -31,8 +31,8 @@ sma_predmat_4c<-readRDS(paste('./analysis_data/sma_predmat_4c_',sma_site,'.rds',
 sim_sma_tst<-sma_predmat_hist[idx_tst,'sim 0']*hym_kcfs_conv
 sim_sma_4c<-sma_predmat_4c[idx_tst,'sim 0']*hym_kcfs_conv
 
-swm_out_hist<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period1,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))*hym_kcfs_conv
-swm_out_4c<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period2,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))*hym_kcfs_conv
+swm_out_hist<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period1,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))*hym_kcfs_conv
+swm_out_4c<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period2,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))*hym_kcfs_conv
 
 swm_out_tst<-swm_out_hist[idx_tst,]
 swm_out_4c<-swm_out_4c[idx_tst,]

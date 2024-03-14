@@ -34,8 +34,8 @@ sma_4c_vars<-readRDS(paste('./analysis_data/sma_4c_vars_',sma_site,'.rds',sep=''
 syn_tst_flow_static<-readRDS('./model_output/hymod_benchmark_syn-flow_hist.rds')
 syn_4c_flow_static<-readRDS('./model_output/hymod_benchmark_syn-flow_4c.rds')
 
-syn_tst_flow_hyb<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period1,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))
-syn_4c_flow_hyb<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period2,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))
+syn_tst_flow_hyb<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period1,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))
+syn_4c_flow_hyb<-readRDS(paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period2,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))
 
 ix<-seq(as.Date('1988-10-01'),as.Date('2018-09-30'),'day')
 
