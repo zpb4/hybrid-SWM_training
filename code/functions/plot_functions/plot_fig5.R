@@ -1,0 +1,168 @@
+#setwd('z:/oro_nonstat/')
+library(ranger)
+source('./code/functions/mm-cfs_conversion.R')
+
+hym_site<-'ORO'
+sma_site<-'ORO'
+#specifications
+vers<-'err13' 
+# 'err13' - SV + lag1:3 errors
+# 'sim13' - SV + lag1:3 sim
+# 'err_sim13' - SV + lag1:3 errors and sim
+# 'err13_llag' - SV + lag1:3 errors and long lagged variables
+# 'all' - all SV (including lag 1:3 terms) and long lagged variables
+noise_reg=T
+seed=10
+
+#wy subset to compare
+#'5wet': c(2005,2006,2011,2016,2017)
+#'5dry': c(2007,2008,2012,2014,2015)
+#'tst-all' : 2005:2018
+wy_comp<-c(2005,2006,2011,2016,2017)
+wy_tag<-'5wet'
+
+hym_kcfs_conv<-as.numeric(area_calc[hym_site,2])*mm_to_cfs/1000
+sma_kcfs_conv<-as.numeric(area_calc[sma_site,2])*mm_to_cfs/1000
+
+sma_hist_vars<-readRDS(paste('./analysis_data/sma_hist_vars_',sma_site,'.rds',sep=''))
+hym_predmat_hist<-readRDS(paste('./analysis_data/hym_predmat_hist_',hym_site,'.rds',sep=''))
+hym_predmat_4c<-readRDS(paste('./analysis_data/hym_predmat_4c_',hym_site,'.rds',sep=''))
+
+rf_idx<-sort(which(colnames(hym_predmat_hist)%in%c('precip 0','tavg 0','sim 0','runoff 0','baseflow 0','et 0','swe 0','upr_sm 0','lwr_sm 0','err -1','err -2','err -3')))
+
+
+ix<-seq(as.Date('1988-10-01'),as.Date('2018-09-30'),'day')
+
+ix_tst<-seq(as.Date('2004-10-01'),as.Date('2018-09-30'),'day')
+ixx_tst<-as.POSIXlt(ix_tst)
+idx_tst<-which(ix=='2004-10-01'):which(ix=='2018-09-30')
+
+obs_tst<-sma_hist_vars[idx_tst,'obs']
+tst_wy<-2005:2018
+obs_sum<-c()
+
+for(i in 1:length(tst_wy)){
+  obs_sum[i]<-sum(obs_tst[which(ix_tst==as.Date(paste(tst_wy[i]-1,'-10-01',sep=''))):which(ix_tst==as.Date(paste(tst_wy[i],'-09-30',sep='')))])
+}
+
+srt_obs<-sort(obs_sum,index.return=T)
+tst_wy[tail(srt_obs$ix,5)] #5 wettest
+#[1] 2016 2005 2011 2006 2017
+tst_wy[head(srt_obs$ix,5)] #5 driest
+#[1] 2014 2015 2008 2007 2012
+
+ix_comp<-c()
+idx_comp<-c()
+for(i in 1:length(wy_comp)){
+  ix_comp<-c(ix_comp,seq(as.Date(paste(wy_comp[i]-1,'-10-01',sep='')),as.Date(paste(wy_comp[i],'-09-30',sep='')),'day'))
+  idx_comp<-c(idx_comp,which(ix==paste(wy_comp[i]-1,'-10-01',sep='')):which(ix==paste(wy_comp[i],'-09-30',sep='')))
+}
+ix_comp<-as.Date(ix_comp,origin = '1970-01-01')
+ixx_comp<-as.POSIXlt(ix_comp)
+
+rf_err_corr<-readRDS(paste('./model_output/hymod_rf-err-corr_cal_',hym_site,'_v-',vers,'_seed',seed,'.rds',sep=''))
+
+#--------------------------------------------------------------
+#plot raw errors vs corrected errors
+png(paste('./figures_tables/fig5.png',sep=''),width=768,height=900)
+par(mfrow=c(2,1),mar=c(1,4,1,1),mgp=c(2,0.5,0),tcl=-0.2,cex.lab=2,cex.axis=1.75)
+
+err_hist<-hym_predmat_hist[idx_comp,'err 0']
+
+db_err<-predict(rf_err_corr,data=hym_predmat_hist[idx_comp,rf_idx])$predictions
+err_db<-err_hist-db_err
+
+err_lst<-vector('list',24)
+
+for(i in 1:12){
+  seas<-which(ixx_comp$mon==(i-1))
+  err_lst[[(i*2-1)]]<-err_hist[seas]*hym_kcfs_conv
+  err_lst[[(i*2)]]<-err_db[seas]*hym_kcfs_conv
+}
+
+mths<-c('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')
+
+boxplot(err_lst,
+        main = '',
+        at = rep(1:12,each=2)+rep(c(0,.3),12),
+        names = 1:24,
+        las = 2,
+        boxwex = rep(c(.3,.2),12),
+        notch = F,
+        col = rep(c('skyblue4','skyblue'),12),
+        ylim = c(-7.5,5),
+        xlim = c(1,12.2),
+        xlab='',
+        ylab='Error (kcfs)',
+        outline = F,
+        axes=F
+)
+axis(1,at=seq(1.12,12.12,1),labels = F)
+axis(2,at=seq(-7.5,5,2.5),labels = seq(-7.5,5,2.5) )
+box(which='plot')
+legend('topright',c('Raw','RF-corrected'),lwd=c(6,6),col=c('skyblue4','skyblue'),cex=2,bty='n')
+abline(h=0,lty=2,col='red')
+text(0.75,4.75,'a)',cex=3,font=2,adj=0)
+text(6,-7,wy_tag,cex=3,font=2,adj=0)
+
+par(mar=c(2,4,0,1))
+
+#4c
+err_4c<-hym_predmat_4c[idx_comp,'err 0']
+
+db_err_4c<-predict(rf_err_corr,data=hym_predmat_4c[idx_comp,rf_idx])$predictions
+err_db_4c<-err_4c-db_err_4c
+#db_err_4c<-predict(rf_err_corr,data=hym_predmat_4c[idx_comp,2:10])$predictions
+#err_db_4c<-err_4c-db_err_4c
+
+err_lst<-vector('list',24)
+
+for(i in 1:12){
+  seas<-which(ixx_comp$mon==(i-1))
+  err_lst[[(i*2-1)]]<-err_4c[seas]*hym_kcfs_conv
+  err_lst[[(i*2)]]<-err_db_4c[seas]*hym_kcfs_conv
+}
+
+mths<-c('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')
+
+boxplot(err_lst,
+        main = '',
+        at = rep(1:12,each=2)+rep(c(0,.3),12),
+        names = 1:24,
+        las = 2,
+        boxwex = rep(c(.3,.2),12),
+        notch = F,
+        col = rep(c('darkorange3','goldenrod1'),12),
+        ylim = c(-7.5,5),
+        xlim = c(1,12.2),
+        xlab='',
+        ylab='Error (kcfs)',
+        outline = F,
+        axes=F
+)
+axis(1,at=seq(1.12,12.12,1),labels = mths)
+axis(2,at=seq(-7.5,5,2.5),labels = seq(-7.5,5,2.5) )
+box(which='plot')
+legend('topright',c('Raw','RF-corrected'),lwd=c(6,6),col=c('darkorange3','goldenrod1'),cex=2,bty='n')
+abline(h=0,lty=2,col='red')
+text(.75,4.75,'b)',cex=3,font=2,adj=0)
+text(6,-7,wy_tag,cex=3,font=2,adj=0)
+
+par(fig=c(.7,.95,.525,.725),mar=c(1,1,0,0),mgp=c(0,-1.25,0),cex.axis=1.25,cex.lab=1.5,tcl=0.1,new=TRUE)
+plot(err_hist,db_err,xlim=c(-6,6),ylim=c(-6,6),xlab='raw error',ylab='RF error',axes=F)
+abline(0,1,lty=2,col='gray')
+axis(1,at=seq(-10,10,5),labels = seq(-10,10,5))
+axis(2,at=seq(-10,10,5),labels = seq(-10,10,5))
+box(which = 'plot')
+
+par(fig=c(.7,.95,.035,.235),mar=c(1,1,0,0),mgp=c(0,-1.25,0),cex.axis=1.25,cex.lab=1.5,tcl=0.1,new=TRUE)
+plot(err_4c,db_err_4c,xlim=c(-6,6),ylim=c(-6,6),xlab='raw error',ylab='RF error',axes=F)
+abline(0,1,lty=2,col='gray')
+axis(1,at=seq(-10,10,5),labels = seq(-10,10,5))
+axis(2,at=seq(-10,10,5),labels = seq(-10,10,5))
+box(which = 'plot')
+
+dev.off()
+
+
+###################################END#########################################

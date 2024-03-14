@@ -14,14 +14,14 @@ print(my.cluster)
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
 
-n<-10
+n<-100
 ar<-3
 hym_site<-'ORO'
 samp_type<-'split' # 'split' 'skip'
 gen_period<-'hist-all' # 'test' 'cal' 'val' 'train' 'hist-all'
 vers<-'err13'
 noise_reg<-T  #use noise regularized coefficients?
-seed<-1
+seed<-10
 
 hym_predmat_hist<-readRDS(paste('./analysis_data/hym_predmat_hist_',hym_site,'.rds',sep=''))
 norm_vec<-readRDS(paste('./model_output/hymod_norm-vec_hist_',hym_site,'.rds',sep=''))
@@ -66,38 +66,38 @@ pred_mat_zero_min<-pred_mat_scale-matrix(rep(pred_mat_zero,length(gen_idx)),ncol
 
 e_t<-hym_predmat_hist[gen_idx,'err 0']
 
-syn_out<-foreach(m = 1:n,.combine='cbind',.packages=c('fGarch','ranger'),.inorder=F) %dopar% {
+#syn_out<-foreach(m = 1:n,.combine='cbind',.packages=c('fGarch','ranger'),.inorder=F) %dopar% {
   
-  syn_res<-syn_gen_mv_ar1_lin(dyn_res_coef,sig_var=pred_mat_zero_min,beta_var=pred_mat_scale,xi_var=pred_mat_scale,phi_var=pred_mat_zero_min,et=e_t)
-  syn_gen<-rep(0,(length(gen_idx)))
-  if(ar>0){
-    syn_gen<-rep(0,(length(gen_idx)+ar));syn_gen[1:ar]<-sample(syn_res,ar)
-  }
+  #syn_res<-syn_gen_mv_ar1_lin(dyn_res_coef,sig_var=pred_mat_zero_min,beta_var=pred_mat_scale,xi_var=pred_mat_scale,phi_var=pred_mat_zero_min,et=e_t)
+  #syn_gen<-rep(0,(length(gen_idx)))
+  #if(ar>0){
+    #syn_gen<-rep(0,(length(gen_idx)+ar));syn_gen[1:ar]<-sample(syn_res,ar)
+  #}
   
-  dat<-pred_mat_rf
-  if(ar>0){
-    ar_terms<-paste('err',0:-ar)
-    rf_gen_idx<-sort(which((colnames(pred_mat_rf)%in%ar_terms)==T))
-    }
+  #dat<-pred_mat_rf
+  #if(ar>0){
+    #ar_terms<-paste('err',0:-ar)
+    #rf_gen_idx<-sort(which((colnames(pred_mat_rf)%in%ar_terms)==T))
+    #}
   
-  for(i in 1:length(gen_idx)){
-    if(ar>0){
-      ar_idx<-(i+ar-1):i
-      dat[i,rf_gen_idx]<-syn_gen[ar_idx] #ar3
-    }
-    err<-predict(rf_err_corr,data=dat[i,])$predictions
-    syn_gen[i+ar]<-err+syn_res[i]
-  }
+  #for(i in 1:length(gen_idx)){
+    #if(ar>0){
+      #ar_idx<-(i+ar-1):i
+      #dat[i,rf_gen_idx]<-syn_gen[ar_idx] #ar3
+    #}
+    #err<-predict(rf_err_corr,data=dat[i,])$predictions
+    #syn_gen[i+ar]<-err+syn_res[i]
+  #}
   
-  return(syn_gen[(ar+1):length(syn_gen)])
-}
+  #return(syn_gen[(ar+1):length(syn_gen)])
+#}
 
-saveRDS(syn_out,paste('./model_output/hymod_syn-err_',hym_site,'_',gen_period,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))
+#saveRDS(syn_out,paste('./model_output/hymod_syn-err_',hym_site,'_',gen_period,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))
 
-sim<-matrix(rep(hym_predmat_hist[gen_idx,'sim 0'],n),ncol=n,byrow=F)
-swm_out<-sim+syn_out
-swm_out[swm_out<0]<-0
-saveRDS(swm_out,paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))
+#sim<-matrix(rep(hym_predmat_hist[gen_idx,'sim 0'],n),ncol=n,byrow=F)
+#swm_out<-sim+syn_out
+#swm_out[swm_out<0]<-0
+saveRDS(swm_out,paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))
 print(paste('end',Sys.time()))
 
 #//////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,16 +105,15 @@ print(paste('end',Sys.time()))
 
 print(paste('start 4C',Sys.time()))
 
-parallel::detectCores()
+#parallel::detectCores()
 
-n.cores <- parallel::detectCores()-2
-my.cluster<-parallel::makeCluster(n.cores,type='PSOCK')
-print(my.cluster)
+#n.cores <- parallel::detectCores()-2
+#my.cluster<-parallel::makeCluster(n.cores,type='PSOCK')
+#print(my.cluster)
 
-doParallel::registerDoParallel(cl = my.cluster)
-foreach::getDoParRegistered()
+#doParallel::registerDoParallel(cl = my.cluster)
+#foreach::getDoParRegistered()
 
-n<-10
 ar<-3
 hym_site<-'ORO'
 samp_type<-'split' # 'split' 'skip'
@@ -197,12 +196,12 @@ syn_out<-foreach(m = 1:n,.combine='cbind',.packages=c('fGarch','ranger'),.inorde
   return(syn_gen[(ar+1):length(syn_gen)])
 }
 
-saveRDS(syn_out,paste('./model_output/hymod_syn-err_',hym_site,'_',gen_period,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))
+saveRDS(syn_out,paste('./model_output/hymod_syn-err_',hym_site,'_',gen_period,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))
 
 sim<-matrix(rep(hym_predmat_4c[gen_idx,'sim 0'],n),ncol=n,byrow=F)
 swm_out<-sim+syn_out
 swm_out[swm_out<0]<-0
-saveRDS(swm_out,paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'.rds',sep=''))
+saveRDS(swm_out,paste('./model_output/hymod_syn-flow_',hym_site,'_',gen_period,'_',samp_type,'_nreg=',noise_reg,'_',n,'X_v-',vers,'_samps=',n,'.rds',sep=''))
 print(paste('end 4C',Sys.time()))
 
 rm(list=ls());gc()

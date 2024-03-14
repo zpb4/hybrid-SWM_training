@@ -1,9 +1,8 @@
 #fit model between hymod and sacsma
-setwd('d:/hybrid-SWM_training/')
+#setwd('d:/hybrid-SWM_training/')
 library(fGarch)
 library(ranger)
 library(optimx)
-library(mco)
 
 #specifications
 vers<-'err13' 
