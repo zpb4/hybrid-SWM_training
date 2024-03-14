@@ -45,4 +45,4 @@ Brodeur, Z. P. (2024). hybrid-SWM_training: Mar 11, 2024 release (v1.0.0) [Softw
 ### Change request policy
 Please raise a GitHub issue on this site or contact the repository owner via email
 ### License
-GNU general purpose license 3.0. See 'LICENSE.md' file for details
+GNU general public license 3.0. See 'LICENSE.md' file for details
