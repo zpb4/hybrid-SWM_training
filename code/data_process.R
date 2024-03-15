@@ -22,13 +22,6 @@ hym_hist<-read.table(paste('./raw_data/hymod_',hym_site,'.txt',sep=''))
 sma_4c<-read.table(paste('./raw_data/sacsma_',sma_site,'_4C.txt',sep=''))
 hym_4c<-read.table(paste('./raw_data/hymod_',hym_site,'_4C.txt',sep=''))
 
-if(sma_site=='ORO'&hym_site=='ORO'){
-  sma_hist<-read.table(paste('./raw_data/sacsma_',sma_site,'.txt',sep=''))
-  hym_hist<-read.table(paste('./raw_data/hymod_',hym_site,'.txt',sep=''))
-  sma_4c<-read.table(paste('./raw_data/sacsma_',sma_site,'_4C.txt',sep=''))
-  hym_4c<-read.table(paste('./raw_data/hymod_',hym_site,'_4C.txt',sep=''))
-}
-
 #hymod output columns
 cnames_hym<-c('year','mo','day','precip','tavg','obs*','sim','runoff','baseflow','et','swe','upr_sm','lwr_sm')
 cnames_sma<-c('year','mo','day','precip','tavg','obs','sim','runoff','baseflow','et','swe','upr_sm','lwr_sm','store')
@@ -88,7 +81,7 @@ hym_predmat_hist<-cbind(hym_err_hist,hym_predmat_hist)
 #create labels for final array
 labs_hym<-paste(rep(c('err','precip','tavg','sim','runoff','baseflow','et','swe','upr_sm','lwr_sm'),3),rep(0:(-3),each=dim(hym_predmat_hist)[2]))
 
-#create super-array of state variables out to lag3 and including long-lag predictors
+#create super-array of state variables out to lag3
 hym_predmat_hist<-cbind(hym_predmat_hist,
                       rbind(matrix(0,nrow=1,ncol=dim(hym_predmat_hist)[2]),as.matrix(hym_predmat_hist[1:(length(ix)-1),])),
                       rbind(matrix(0,nrow=2,ncol=dim(hym_predmat_hist)[2]),as.matrix(hym_predmat_hist[1:(length(ix)-2),])),

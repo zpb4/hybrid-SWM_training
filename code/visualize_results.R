@@ -7,7 +7,7 @@
 #Plot Figure 4 - Test and Test+4C comparison of raw errors for '5wet' and '5dry' periods
 #brief demo of how you can set-up individual scripts as plotting functions
 source('./code/functions/plot_functions/plot_fig4.R')
-x = 14
+x = 14       #input number is just a dummy placeholder for the function
 plot_fig4(14)
 
 rm(list=ls());gc()
