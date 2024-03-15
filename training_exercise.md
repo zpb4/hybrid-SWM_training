@@ -26,7 +26,7 @@ As mentioned in the model fitting section, the error correction model is simply 
 ![image info](figures_tables/RF.png "hybrid SWM")
 #### _Random Forest_  
 
-The code implementation of the RF model is straightforward, as is prediction from the fitted model. Importantly, the RF error correction model is fitted to a calibration subset of the training data, leaving the validation subset for fitting of the DRM. To interpret variable importance, we can use the output of the fitted RF model directly, which calculated feature importance aggregated over all the trees in the ensemble. This output is described in more detail in the 'RF variable importance' figure and text below.   
+Importantly, the RF error correction model is fitted to a calibration subset of the training data, leaving the validation subset for fitting of the DRM. To interpret variable importance, we can use the output of the fitted RF model directly, which calculated feature importance aggregated over all the trees in the ensemble. This output is described in more detail in the 'RF variable importance' figure and text below.   
    
 We can also employ LIME (Local, Interpretable, Model-agnostic Explanation) as a form of explainable AI (xAI) to the fitted RF model to understand local feature importance, down to the granularity of individual timesteps. [Here](docs/LIME.pdf) is a short pictorial depiction of LIME. We describe the LIME procedure as implemented in this work ('lime' package in R) in the associated section below.
 
@@ -36,7 +36,9 @@ The DRM is a little bit methodologically dense. It embeds linear models for all 
 #### _SEP distribution_ 
 
 ## Code implementation
-This is all quite a lot to parse. Let's take a look at the code implementation, which may clarify some of these higher level descriptions.
+This is all quite a lot to parse. Let's take a look at the code implementation, which may clarify some of these higher level descriptions. The model scripts included in this repo have been commented quite extensively, so I'll just try to highlight key sections of the code to explain what they are doing.   
+### Data processing
+As noted above, the data processing part of the procedure is not super hard to follow. 
 
 
 ![image info](figures_tables/fig5.png "Error correction result")
