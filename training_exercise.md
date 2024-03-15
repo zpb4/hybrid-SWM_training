@@ -33,10 +33,10 @@ We can also employ LIME (Local, Interpretable, Model-agnostic Explanation) as a 
 ### Dynamic residual model (DRM)
 The DRM is a little bit methodologically dense. It embeds linear models for all the parameters of a distribution, the skew exponential power (SEP) distribution, inside a log-likelihood function that can be maximized against the empirical residuals in the validation subset after RF error correction. This allows the DRM to capture 'out-of-sample' residual uncertainty and time-varying, state-variable dependent properties of those residuals. We employ a noise regularization technique to the MLE procedure that helps smooth out the estimation of the coefficients against the data. As noted, the SEP distribution is the heart of this model and most importantly, the parameterizations for kurtosis ($\beta$) and skewness ($\xi$) shown . What this means practically is that the result of the DRM fitting procedure ('model_train.R') yields a set of coefficients (9 state-variable coefficients + 1 intercept) for each SEP parameter's linear model. So there is a state-variable dependent linear model for the stdev term $\sigma_t$, a linear model for the kurtosis parameter $\beta_t$, etc. Importantly, there is no model for the mean $\mu$ because the residuals are assumed to be debiased by the error correction procedure. Thus, given any timeseries of state-variables, the fitted linear models will generate a timeseries of the 4 parameters of the DRM ($\sigma_t, \beta_t, \xi_t, \phi_t$). Functionally, this means that generation of new residual at time = $t$ is a random sample from the $SEP(0,\sigma_t,\beta_t,\xi_t)$ modified by the residual at $t-1$  ($\epsilon_{t-1}$) through the $\phi_t$ lag-1 autocorrelation term.  
 ![image info](figures_tables/sep.png "SEP distribution")
-#### _SEP distribtuion_ 
+#### _SEP distribution_ 
 
 ## Code implementation
-The DRM is a little bit methodologically dense.
+This is all quite a lot to parse. Let's take a look at the code implementation, which may clarify some of these higher level descriptions.
 
 
 ![image info](figures_tables/fig5.png "Error correction result")
