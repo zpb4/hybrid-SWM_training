@@ -33,7 +33,9 @@ This repository contains most of the standard elements of a GRRIEN repository, e
    I: trained model objects and pre-processed data arrays   
    O: SWM simulations saved as .rds arrays   
       
-   _RUNTIME: >1 hour on HPC for 100x samples; if just wanting to familiarize with model and code, you can use the pre-staged simulation data in the 'model_outputs' folder._   
+   _RUNTIME: >1 hour on HPC for 100x samples; if just wanting to familiarize with model and code, you can use the pre-staged simulation data in the 'model_outputs' folder._  
+
+   _NOTE: This script combines 'model_simulate_test.R', 'model_simulate_test4c.R', and 'model_simulate_benchmark.R' for illustrative purposes. Recommend running these scripts individually if you'd like to speed up generation, particularly on HPC resources where each script can be assigned to a different node. The 'model_simulate_benchmark.R' runs in <5 min._   
 #### 5. Run ./code/model_lime.R   
    _Description: Runs the Local Interpretable Model Agnostic (LIME) routine against the trained Random Forest error correction model_   
    I: trained RF model object and pre-processed data arrays   
