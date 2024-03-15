@@ -1,7 +1,7 @@
 _Note: Repo is currently under construction; should be complete by 3/12/24_
 # hybrid-SWM training and familiarization
 Overview: This file has some redundancy with the associated WaterProgramming blog post [here](https://waterprogramming.wordpress.com/2024/03/11/nonstationary-stochastic-watershed-modeling/). It is intended to
-describe elements of the hybrid-SWM implementation in more detail than a surface-level implementation in the README file. 
+describe elements of the hybrid-SWM implementation in more detail than a surface-level implementation in the README file. The individual scripts are also heavily commented to describe the workings of each element of the model.   
 ### Overview of the GRRIEN repository structure
 In the Steinschneider group, we cover elements of the GRRIEN repository setup as part of internal training [here](https://github.com/SteinschneiderLab/lab-manual/tree/main/training/open_research). See also Rohini's
 blog post on the same [here](https://waterprogramming.wordpress.com/2023/03/06/introducing-the-grrien-analysis-framework-defining-standards-for-reproducible-and-robust-supervised-learning-of-earth-surface-processes-at-large-spatial-scales/), which describe Elizabeth Carter's paper (Syracuse University, former Steinschneider Group member) that formalizes this method.
@@ -26,18 +26,26 @@ As mentioned in the model fitting section, the error correction model is simply 
 ![image info](figures_tables/RF.png "hybrid SWM")
 #### _Random Forest_  
 
-The code implementation of the RF model is straightforward, as is prediction from the fitted model. Importantly, the RF error correction model is fitted to a calibration subset of the training data, leaving the validation subset for fitting of the DRM. To interpret variable importance, we can use the output of the fitted RF model directly, which calculated feature importance aggregated over all the trees in the ensemble. 
+The code implementation of the RF model is straightforward, as is prediction from the fitted model. Importantly, the RF error correction model is fitted to a calibration subset of the training data, leaving the validation subset for fitting of the DRM. To interpret variable importance, we can use the output of the fitted RF model directly, which calculated feature importance aggregated over all the trees in the ensemble. This output is described in more detail in the 'RF variable importance' figure and text below.   
+   
+We can also employ LIME (Local, Interpretable, Model-agnostic Explanation) as a form of explainable AI (xAI) to the fitted RF model to understand local feature importance, down to the granularity of individual timesteps. [Here](docs/LIME.pdf) is a short pictorial depiction of LIME. We describe the LIME procedure as implemented in this work ('lime' package in R) in the associated section below.
+
+### Dynamic residual model (DRM)
+The DRM is a little bit methodologically dense. It embeds linear models for all the parameters of a distribution, the skew exponential power (SEP) distribution, inside a log-likelihood function that can be maximized against the empirical residuals in the validation subset after RF error correction. This allows the DRM to capture 'out-of-sample' residual uncertainty and time-varying, state-variable dependent properties of those residuals. We employ a noise regularization technique to the MLE procedure that helps smooth out the estimation of the coefficients against the data. As noted, the SEP distribution is the heart of this model. What this means practically is that the result of the DRM fitting procedure ('model_train.R') yields a set of coefficients (9  for each SEP parameter's linear model. So there is a state-variable dependentlinear model for the stdev term, 'sigma_t', a linear model 
+![image info](figures_tables/sep.png "SEP distribution")
+#### _SEP distribtuion_ 
+ 
+![image info](figures_tables/fig5.png "Error correction result")
+#### _Error correction residuals_  
+
+### RF variable importance figure (Figure 6)
+This is the variable importance data output directly from the RF implementation used in this work ('ranger' package in R). This 
 ![image info](figures_tables/fig6.png "RF variable importance")
 #### _RF variable importance_  
 
-We can also employ LIME (Local, Interpretable, Model-agnostic Explanation) as a form of explainable AI (xAI) to the fitted RF model to understand local feature importance, down to the granularity of individual timesteps. [Here](docs/LIME.pdf) is a short pictorial depiction of LIME. Below is the result of the LIME procedure applied to subsets of the data to accentuate features that contribute most to inferring changing biases between the Test and Test+4C scenarios.   
+Below is the result of the LIME procedure applied to subsets of the data to accentuate features that contribute most to inferring changing biases between the Test and Test+4C scenarios.   
 ![image info](figures_tables/fig7.png "LIME")
 #### _LIME_  
-
-### Dynamic residual model (DRM)
-The DRM is a little bit methodologically dense. It embeds linear models for all the parameters of a distribution, the skew exponential power (SEP) distribution, inside a log-likelihood function that can be maximized against the empirical residuals in the validation subset after RF error correction. This allows the DRM to capture 'out-of-sample' residual uncertainty and time-varying, state-variable dependent properties of those residuals. We employ a noise regularization technique to the MLE procedure that helps smooth out the estimation of the coefficients against the data. It is probably most useful here to describe what the DRM actually does.  The first figure shows the outcome of the RF error correction procedure against out-of-sample errors for both Test and Test+4C.  
-![image info](figures_tables/fig5.png "Error correction result")
-#### _Error correction residuals_  
 
 The application of the DRM is shown for the same periods, demonstrating its ability to adapt in the Test and Test+4C case.  
 ![image info](figures_tables/fig8.png "DRM fits")
