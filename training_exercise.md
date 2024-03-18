@@ -59,36 +59,61 @@ $\tilde{e_t}=f(\theta_{SV,t},\tilde{e_{t-3}},\tilde{e_{t-2}},\tilde{e_{t-1}})+\t
 After generation of the errors, the SWM is simulated by adding these errors back to the original process model simulation and ensuring that any negative flow simulations are corrected to zero (L120-124). The error generation procedure is repeated as many times as the desired number of simulation samples (100 by default in these scripts).
 
 ### model_lime
-This script simulates
+There is not much to cover here in the actual script. The LIME procedure is implemented against the RF error correction model given the timeseries inputs of state-variables and lagged errors from the Test and Test+4C cases. The 'lime' model in R creates an 'explanation' object, which has a number of LIME attributes. We use the feature weight vector timeseries for the generation of results used to analyze the most important features for specific subsets of the data. It is important to re-emphasize that LIME creates a feature weight vector at _each timestep_, which the parent RF model cannot do on its own.
 
+### visualize_results
+The visualize_results script generates the figures below that are identical to the figures in manuscript (Figure numbers match manuscript figure numbers). These results are briefly described below in terms of what model element they are attempting to highlight. Further detail can be found in the manuscript.
+
+### RF error correction result (Figure 4)
+This is the core result upon which the remainder of the study is built. This figure shows that errors between a 'truth' and 'process' model can differ substantially under alternate forcing scenarios. Moreover, these changes are most significant in the wettest months of the year. We also note that '5wet' refers to the use of the 5 wettest years in Test/Test+4C which demonstrated the greatest degree of error non-stationarity.   
+   
+![image info](figures_tables/fig4.png "Error non-stationarity")
+#### _Error non-stationarity_ 
+
+### RF error correction result (Figure 5)
+The primary purpose of this figure is to show the result of applying the error correction model. These results show that the effect of the RF error correction model is largely to debias the errors with some reduction in variance too. This model is effective in both Test and Test+4C, although the model does not do particularly well in low flow summer months for Test+4C, which shows up in later results.   
+   
 ![image info](figures_tables/fig5.png "Error correction result")
-#### _Error correction residuals_  
+#### _RF error correction results_  
 
 ### RF variable importance figure (Figure 6)
-This is the variable importance data output directly from the RF implementation used in this work ('ranger' package in R). This 
+This is the variable importance data output directly from the RF implementation used in this work ('ranger' package in R). This figure shows the aggregate importance of state-variable features in the RF training dataset (the calibration subset).   
+   
 ![image info](figures_tables/fig6.png "RF variable importance")
 #### _RF variable importance_  
 
-Below is the result of the LIME procedure applied to subsets of the data to accentuate features that contribute most to inferring changing biases between the Test and Test+4C scenarios.   
+### LIME feature weight analysis (Figure 7)
+This is the result of the LIME procedure applied to subsets of the data to accentuate features that contribute most to inferring changing biases between the Test and Test+4C scenarios. Specifically, this figure is targeted to the month of March where the error biases between Test and Test+4C show the greatest difference. The feature weights are further combed to only those days in March with a negative error for Test and a positive error for Test+4C.  
+   
 ![image info](figures_tables/fig7.png "LIME")
 #### _LIME_  
 
-The application of the DRM is shown for the same periods, demonstrating its ability to adapt in the Test and Test+4C case.  
+### DRM distributional comparison (Figure 8)
+The application of the DRM is shown for the same months of Test and Test+4C, demonstrating its ability to adapt to changing distributional properties when conditioned on state-variable information. This figure is quite important as it shows both a) that even the residual part of the procedure changes under the Test+4c scenario and b) that the DRM is able to pick these changes up rather well through its state-variable dependent construction.   
+   
 ![image info](figures_tables/fig8.png "DRM fits")
 #### _Fitted DRM result_  
+
+### DRM parameter seasonality (Figure 9)
+This figure compares the timeseries of DRM parameters (monthly averages) between the Test and Test+4C case. This figure showcases an inherent interpretability feature of the DRM in its parameter timeseries while showing important features of their seasonality and dynamic attributes.   
    
-Finally, interpretability of the model can be relatively easily accomplished looking at properties of the parameters, such as their seasonality.
 ![image info](figures_tables/fig9.png "DRM seasonality")
 #### _DRM parameter seasonality_  
 
-Comparison of the hybrid SWM to a 'static' approach noting the inability of the static model to emulate changes in the Test+4C period.
+### Hybrid vs Static SWM comparison (Figure 10)
+Compares the hybrid SWM to a 'static' benchmark SWM mentioned in previous sections. This static SWM is designed to be representative of commonly used SWM error modeling approaches. This is a key result that shows the potential pitfalls of making temporal seasonality assumptions under climate change. It also shows the capability of the hybrid SWM in capturing the shifts, although it is clearly challenged in certain regimes (e.g. summer months).   
+   
 ![image info](figures_tables/fig10.png "hybrid SWM vs static SWM")
 #### _Hybrid SWM vs static SWM_  
 
-Timeseries plot in 2011 showing implications of shifts in biases between Test and Test+4C case. Of note during snowmelt periods and flow recession.
+### Hybrid SWM timeseries plot (Figure 11)
+The purpose of this plot is to bring all the error focused figures back to the actual purpose of an SWM, which is to produce streamflow simulations. This figure is intended to highlight the difference in biases between truth and process models and show how the hybrid SWM is able to correct some of these biases, for instance during flow recessions.   
+   
 ![image info](figures_tables/fig11.png "hybrid SWM timeseries plot")
 #### _Hybrid SWM timeseries plot_  
 
-Comparison of hybrid SWM and static SWM in terms of emulating extreme high and low flows in Test and Test+4C.
+### Hybrid vs static SWM - flow extremes (Figure 12)
+This figure highlights the implications of SWM application for the estiation of high and low flow extremes, which arguably is one of the most important potential uses of SWMs. Specifically, this figure shows that the hybrid SWM is a better estimator of the 'truth' model extremes in most cases.   
+   
 ![image info](figures_tables/fig12.png "hybrid SWM vs static SWM - high/low flow extremes")
 #### _Hybrid SWM vs static SWM - high/low flow extremes_ 
