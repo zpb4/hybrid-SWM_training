@@ -36,10 +36,13 @@ The DRM is a little bit methodologically dense. It embeds linear models for all 
 
 ## Code implementation
 This is all quite a lot to parse. Let's take a look at the code implementation, which may clarify some of these higher level descriptions. The model scripts included in this repo have been commented quite extensively, so I'll just try to highlight key sections of the code to explain what they are doing.   
-### Data processing
-As noted above, the data processing part of the procedure is not super hard to follow. The script is just downloading the raw data, applying labels to it, and doing some simple offsetting to establish lag 0 to lag 3 versions of all state-variables and the error timeseries. The state variables used for HYMOD are shown in the table below. The matrix output by the data-processing script is repeated from lag 0 to lag 3, but the only lagged information used in the actual modeling is the lag 1 to 3 errors. Note how the errors are defined in the script as the 'truth' model minus the 'process' model outputs.
+### data_process
+As noted above, the data processing part of the procedure is not super hard to follow. The script is just downloading the raw data, applying labels to it, and doing some simple offsetting to establish lag 0 to lag 3 versions of all state-variables and the error timeseries. The state variables used for HYMOD are shown in the table below. The matrix output by the data-processing script is repeated from lag 0 to lag 3, but the only lagged information used in the actual modeling is the lag 1 to 3 errors. Note how the errors are defined in the script as the 'truth' model minus the 'process' model outputs (L66-71).
 ![image info](figures_tables/statvar_table.png "State variables")
 #### _State variables_ 
+### model_train
+This script fits both the RF error correction model and the DRM. 
+
 
 ![image info](figures_tables/fig5.png "Error correction result")
 #### _Error correction residuals_  
