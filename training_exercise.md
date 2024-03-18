@@ -41,8 +41,10 @@ As noted above, the data processing part of the procedure is not super hard to f
 ![image info](figures_tables/statvar_table.png "State variables")
 #### _State variables_ 
 ### model_train
-This script fits both the RF error correction model and the DRM. 
-
+This script fits both the RF error correction model and the DRM. Up until L35, the script sets up the date/time indices for the calibration, validation, and test periods and organizes the predictor matrices for both the RF error correction (all lag 0 state variables + lag 1:3 errors) and the DRM (all lag 0 state variables. The actual fitting of the RF error correction model 
+   
+![image info](figures_tables/drm_functions.PNG "DRM functions")
+#### _DRM functions_ 
 
 ![image info](figures_tables/fig5.png "Error correction result")
 #### _Error correction residuals_  
