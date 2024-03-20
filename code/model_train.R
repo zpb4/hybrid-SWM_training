@@ -165,7 +165,7 @@ rownames(noise_coef_mat)<-c('sigma','beta','xi','phi')
 #Good solutions should be greater than 0 and are often in the positive thousands (e.g. 3000)
 noise_ll<-GL_fun_mv_ar1_lin(noise_dyn_res_coef,sig_var=dyn_res_preds_zero,beta_var=dyn_res_preds,xi_var=dyn_res_preds,phi_var=dyn_res_preds_zero,et=err_db_val,noise=rep(0,length(err_db_val)),neg=F)
 #calculate parameter timeseries for each of the 4 DRM parameters
-noise_param_out<-GL_fun_mv_ar1_lin_params(noise_dyn_res_coef,sig_var=dyn_res_preds_zero,beta_var=dyn_res_preds,xi_var=dyn_res_preds,phi_var=dyn_res_preds_zero,et=noise_err_db_val)
+noise_param_out<-GL_fun_mv_ar1_lin_params(noise_dyn_res_coef,sig_var=dyn_res_preds_zero,beta_var=dyn_res_preds,xi_var=dyn_res_preds,phi_var=dyn_res_preds_zero,et=err_db_val)
 
 #print the log-likelihood values and coefficient matrix for real-time analysis (helpful for HPC implementation)
 print(noise_ll)
